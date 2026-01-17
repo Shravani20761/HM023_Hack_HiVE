@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 // TEMPORARY: Using mock auth for demo - switch back to '../appwrite/auth' when backend is ready
-import authService from '../appwrite/mockAuth';
+import authService from '../appwrite/auth';
 import AuthContext from '../context/authContext';
 
 const Signup = () => {
@@ -30,7 +30,7 @@ const Signup = () => {
             if (session) {
                 const userData = await authService.getCurrentUser();
                 if (userData) login(userData);
-                navigate("/dashboard");
+                navigate("/");
             }
         } catch (error) {
             setError(error.message);

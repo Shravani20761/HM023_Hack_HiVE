@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from '../context/authContext'
+import LoadingSpinner from './LoadingSpinner'
 
 export default function AuthLayout({ children, authentication = true }) {
     const navigate = useNavigate()
@@ -22,5 +23,5 @@ export default function AuthLayout({ children, authentication = true }) {
         }
     }, [user, navigate, authentication, loading])
 
-    return loader ? <h1>Loading...</h1> : <>{children}</>
+    return loader ? <LoadingSpinner /> : <>{children}</>
 }

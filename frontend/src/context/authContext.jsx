@@ -1,6 +1,5 @@
 import React, { useState, useEffect, createContext } from 'react'
-// TEMPORARY: Using mock auth for demo - switch back to '../appwrite/auth' when backend is ready
-import authService from '../appwrite/mockAuth'
+import authService from '../appwrite/auth'
 
 const AuthContext = createContext()
 
@@ -17,16 +16,20 @@ export const AuthProvider = ({ children }) => {
                     setUser(null)
                 }
             })
+            .catch((error) => {
+                console.error("Auth Context :: getCurrentUser :: error", error);
+                setUser(null);
+            })
             .finally(() => setLoading(false))
     }, [])
 
-    const login = (userData) => {
+    const login = async (userData) => {
         setUser(userData)
     }
 
-    const logout = () => {
+    const logout = async () => {
+        await authService.logout();
         setUser(null)
-        authService.logout()
     }
 
     return (
