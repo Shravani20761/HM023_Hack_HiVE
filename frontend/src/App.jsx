@@ -10,6 +10,10 @@ import CampaignDetail from './pages/CampaignDetail';
 import CampaignContent from './pages/CampaignContent';
 import CampaignAssets from './pages/CampaignAssets';
 import CampaignSchedule from './pages/CampaignSchedule';
+import CampaignFeedback from './pages/CampaignFeedback';
+import CampaignAnalytics from './pages/CampaignAnalytics';
+import CampaignTeam from './pages/CampaignTeam';
+import LandingPage from './pages/LandingPage';
 // import CampaignList from './pages/CampaignList';
 // import CampaignCreate from './pages/CampaignCreate';
 // import CampaignDetailLayout from './pages/CampaignDetailLayout';
@@ -73,20 +77,12 @@ function App() {
             <Route path=":id/content" element={<CampaignContent />} />
             <Route path=":id/assets" element={<CampaignAssets />} />
             <Route path=":id/schedule" element={<CampaignSchedule />} />
+            <Route path=":id/feedback" element={<CampaignFeedback />} />
+            <Route path=":id/analytics" element={<CampaignAnalytics />} />
+            <Route path=":id/team" element={<CampaignTeam />} />
           </Route>
 
-          <Route path="/" element={
-            <div className="text-center py-20">
-              <h1 className="text-4xl font-bold text-primary-text mb-4">Welcome to HackHiVE</h1>
-              <p className="text-secondary-text mb-8">Manage your campaigns efficiently.</p>
-              <Link to="/campaigns" className="bg-primary-accent text-white px-6 py-3 rounded-md font-medium hover:bg-opacity-90">
-                View Campaigns
-              </Link>
-              <div className="mt-4">
-                <Link to="/login" className="text-primary-accent hover:underline">Or Login/Signup</Link>
-              </div>
-            </div>
-          } />
+          <Route path="/" element={<LandingPage />} />
 
           {/* <Route path="/campaigns" element={
             <AuthLayout authentication={true}>

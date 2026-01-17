@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 const CampaignDetail = () => {
     const { id } = useParams();
@@ -78,12 +78,12 @@ const CampaignDetail = () => {
                     <div className="h-8 w-px bg-gray-200"></div>
 
                     <div className="flex gap-3">
-                        <button className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 shadow-sm transition-all">
-                            Share
-                        </button>
-                        <button className="px-4 py-2 text-sm font-bold text-white bg-login-btn-primary rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                            Schedule Campaign
-                        </button>
+                        <Link to={`/campaigns/${id}/feedback`} className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 shadow-sm transition-all flex items-center gap-2">
+                            <span>💬</span> Feedback
+                        </Link>
+                        <Link to={`/campaigns/${id}/schedule`} className="px-4 py-2 text-sm font-bold text-white bg-login-btn-primary rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                            <span>📅</span> Schedule
+                        </Link>
                     </div>
                 </div>
             </div>
