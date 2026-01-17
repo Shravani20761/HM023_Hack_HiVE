@@ -7,7 +7,7 @@ import { PageHeader, Loader, Icons, EmptyState } from '../components/BasicUIComp
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-const CampaignFeedback = () => {
+const CampaignSettings = () => {
     const { id } = useParams();
     const { getJWT } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
@@ -34,12 +34,12 @@ const CampaignFeedback = () => {
     return (
         <CampaignLayout campaignName={campaignName}>
             <PageHeader
-                title="Feedback"
-                subtitle="Audience comments and replies"
+                title="Settings"
+                subtitle="Campaign configuration"
             />
-            <EmptyState icon={Icons.MessageSquare} title="No Feedback" description="No comments or feedback received yet." />
+            <EmptyState icon={Icons.Settings} title="Settings" description="Configuration options here." />
         </CampaignLayout>
     );
 };
 
-export default CampaignFeedback;
+export default CampaignSettings;

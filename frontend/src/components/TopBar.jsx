@@ -19,9 +19,19 @@ const TopBar = ({ title }) => {
 
     return (
         <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10 shadow-sm">
-            {/* Page Title / Breadcrumb */}
-            <div>
-                <h1 className="text-2xl font-bold text-login-text-primary tracking-tight">{title || 'Dashboard'}</h1>
+            <div className="flex items-center gap-12">
+                <div
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => navigate('/')}
+                >
+                    <div className="h-8 w-8 bg-black rounded-lg flex items-center justify-center text-white font-bold">H</div>
+                    <h1 className="text-xl font-bold text-slate-900 tracking-tight">HackMatrix</h1>
+                </div>
+
+                <nav className="hidden md:flex items-center gap-6">
+                    <button onClick={() => navigate('/dashboard')} className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Dashboard</button>
+                    <button onClick={() => navigate('/campaigns')} className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Campaigns</button>
+                </nav>
             </div>
 
             {/* Right Actions */}

@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import authMiddleware from './middleware/auth.middleware.js';
 import { campaignRoleMiddleware, systemRoleMiddleware, requirePermission, requireSystemPermission } from './middleware/rbac.middleware.js';
 import { checkPermission, PERMISSIONS } from './utils/rbac.js';
-import { createCampaign } from './controller/campaign.controller.js';
+import { createCampaign, listCampaigns, getCampaign, getCampaignTeam } from './controller/campaign.controller.js';
 import { getSystemCapabilities } from './controller/system.controller.js';
 import { listUsers } from './controller/user.controller.js';
 
@@ -47,6 +47,15 @@ app.post('/api/campaigns',
     requireSystemPermission('CREATE_CAMPAIGN'),
     createCampaign
 );
+
+// 2a. List Campaigns
+app.get('/api/campaigns', authMiddleware, listCampaigns);
+
+// 2b. Get Single Campaign
+app.get('/api/campaigns/:id', authMiddleware, getCampaign);
+
+// 2c. Get Campaign Team
+app.get('/api/campaigns/:id/team', authMiddleware, getCampaignTeam);
 
 // 3. List Users (For assignments) - Protected
 app.get('/api/users', authMiddleware, listUsers);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from '../context/authContext'
 import LoadingSpinner from './LoadingSpinner'
+import TopBar from './TopBar'
 
 export default function AuthLayout({ children, authentication = true }) {
     const navigate = useNavigate()
@@ -23,5 +24,12 @@ export default function AuthLayout({ children, authentication = true }) {
         }
     }, [user, navigate, authentication, loading])
 
-    return loader ? <LoadingSpinner /> : <>{children}</>
+    return loader ? (
+        <LoadingSpinner />
+    ) : (
+        <div className="min-h-screen bg-gray-50/50">
+            {authentication && <TopBar />}
+            {children}
+        </div>
+    )
 }

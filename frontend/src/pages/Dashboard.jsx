@@ -1,97 +1,107 @@
-import React, { useContext } from 'react';
-import Sidebar from '../components/Sidebar';
-import TopBar from '../components/TopBar';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 import AuthContext from '../context/authContext';
+import { PageHeader, Card, Loader, EmptyState, Icons, Button } from '../components/BasicUIComponents';
+
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const Dashboard = () => {
-    const { user } = useContext(AuthContext);
+    const { getJWT } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState(null);
 
-    const stats = [
-        { label: 'Active Campaigns', value: '12', change: '+2.5%', color: 'bg-indigo-500' },
-        { label: 'Total Reach', value: '45.2k', change: '+12%', color: 'bg-purple-500' },
-        { label: 'Engagement Rate', value: '4.8%', change: '-0.4%', color: 'bg-pink-500' },
-        { label: 'Pending Approvals', value: '3', change: '0%', color: 'bg-orange-500' },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = await getJWT();
+                const config = { headers: { Authorization: `Bearer ${token}` } };
+                // Using campaigns endpoint for now as dashboard specific might not be ready
+                const res = await axios.get(`${API_BASE_URL}/campaigns`, config);
+                setData({ campaigns: res.data || [] });
+                setLoading(false);
+            } catch (error) {
+                console.error("Dashboard fetch error", error);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [getJWT]);
+
+    if (loading) return <Loader />;
+
+    const campaigns = data?.campaigns || [];
 
     return (
-        <div className="flex h-screen bg-primary-bg overflow-hidden font-sans">
-            {/* Sidebar (Fixed) */}
-            <Sidebar />
+        <div className="p-8 max-w-7xl mx-auto">
+            <PageHeader
+                title="Dashboard"
+                subtitle="Overview of your campaigns and activities"
+            />
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-                <TopBar title="Dashboard" />
-
-                {/* Scrollable Content */}
-                <main className="flex-1 overflow-y-auto p-8">
-
-                    {/* Welcome Section */}
-                    <div className="mb-8 bg-gradient-to-r from-login-bg-start to-login-bg-middle rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                        <div className="relative z-10">
-                            <h2 className="text-3xl font-bold mb-2">Welcome back, {user ? user.name : 'Creator'}! 👋</h2>
-                            <p className="text-indigo-100 max-w-2xl text-lg">
-                                You have 3 campaigns pending approval today. Check your analytics to see how your recent posts are performing.
-                            </p>
-                            <button className="mt-6 px-6 py-3 bg-white text-login-bg-start font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-md">
-                                Create New Campaign
-                            </button>
-                        </div>
-                        {/* Decorative background blobs */}
-                        <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-                        <div className="absolute right-20 bottom-0 w-40 h-40 bg-login-bg-end/30 rounded-full blur-2xl"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <Card className="p-6 flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                        <Icons.Layers />
                     </div>
+                    <div>
+                        <p className="text-sm text-slate-500 font-medium">Active Campaigns</p>
+                        <p className="text-2xl font-bold text-slate-800">{campaigns.length}</p>
+                    </div>
+                </Card>
+                <Card className="p-6 flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                        <Icons.MessageSquare />
+                    </div>
+                    <div>
+                        <p className="text-sm text-slate-500 font-medium">Pending Approvals</p>
+                        <p className="text-2xl font-bold text-slate-800">3</p>  {/* Mocked for UI */}
+                    </div>
+                </Card>
+                <Card className="p-6 flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                        <Icons.BarChart />
+                    </div>
+                    <div>
+                        <p className="text-sm text-slate-500 font-medium">Avg Engagement</p>
+                        <p className="text-2xl font-bold text-slate-800">+24%</p> {/* Mocked for UI */}
+                    </div>
+                </Card>
+            </div>
 
-                    {/* Quick Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-xl ${stat.color} bg-opacity-10 text-${stat.color.split('-')[1]}-600`}>
-                                        <span className="text-2xl">📊</span> {/* Placeholder for actual icons */}
+            <h3 className="text-lg font-bold text-slate-800 mb-6">Recent Campaigns</h3>
+
+            {campaigns.length === 0 ? (
+                <EmptyState
+                    icon={Icons.Layers}
+                    title="No Campaigns Yet"
+                    description="Get started by creating your first marketing campaign."
+                    action={<Button href="/campaigns/create">Create Campaign</Button>}
+                />
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {campaigns.slice(0, 6).map(campaign => (
+                        <Card key={campaign.id} className="hover:shadow-md transition-shadow">
+                            <div className="p-6">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold">
+                                        {campaign.name.substring(0, 2).toUpperCase()}
                                     </div>
-                                    <span className={`text-sm font-bold ${stat.change.startsWith('+') ? 'text-green-500' : stat.change === '0%' ? 'text-gray-400' : 'text-red-500'}`}>
-                                        {stat.change}
+                                    <span className={`px-2 py-1 text-xs font-bold rounded bg-green-50 text-green-700`}>
+                                        ACTIVE
                                     </span>
                                 </div>
-                                <h3 className="text-gray-500 text-sm font-medium mb-1">{stat.label}</h3>
-                                <p className="text-3xl font-bold text-login-text-primary">{stat.value}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Content Section Placeholder */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Left Column (Main) */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                <h3 className="text-lg font-bold text-login-text-primary mb-4">Recent Campaigns</h3>
-                                <div className="border rounded-xl p-8 text-center text-gray-400 bg-gray-50/50 border-dashed">
-                                    Chart / Table Placeholder
+                                <h4 className="text-lg font-bold text-slate-800 mb-2">{campaign.name}</h4>
+                                <p className="text-slate-500 text-sm line-clamp-2 mb-4">{campaign.description || 'No description provided.'}</p>
+                                <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+                                    <span className="text-xs text-slate-400 font-medium">Ends {new Date(campaign.end_date).toLocaleDateString()}</span>
+                                    <a href={`/campaigns/${campaign.id}`} className="text-sm font-semibold text-blue-600 hover:text-blue-700">View &rarr;</a>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Right Column (Side) */}
-                        <div className="space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                <h3 className="text-lg font-bold text-login-text-primary mb-4">Activity Log</h3>
-                                <div className="space-y-4">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex gap-4 items-start pb-4 border-b border-gray-50 last:border-0 last:pb-0">
-                                            <div className="w-2 h-2 mt-2 rounded-full bg-login-bg-middle"></div>
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-800">New campaign created</p>
-                                                <p className="text-xs text-gray-400">2 hours ago</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </main>
-            </div>
+                        </Card>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
