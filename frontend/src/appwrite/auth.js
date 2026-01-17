@@ -52,6 +52,15 @@ export class AuthService {
             console.log("Appwrite serive :: logout :: error", error);
         }
     }
+
+    async createJWT() {
+        try {
+            return await this.account.createJWT();
+        } catch (error) {
+            console.log("Appwrite service :: createJWT :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

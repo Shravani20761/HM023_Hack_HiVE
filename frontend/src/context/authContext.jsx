@@ -32,8 +32,18 @@ export const AuthProvider = ({ children }) => {
         setUser(null)
     }
 
+    const getJWT = async () => {
+        try {
+            const jwt = await authService.createJWT();
+            return jwt.jwt;
+        } catch (error) {
+            console.error("Auth Context :: getJWT :: error", error);
+            return null;
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, getJWT }}>
             {children}
         </AuthContext.Provider>
     )

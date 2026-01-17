@@ -2,8 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-// Note: In ES modules, when importing local files, you often need the .js extension
 import authMiddleware from './middleware/auth.middleware.js';
+import { campaignRoleMiddleware, systemRoleMiddleware, requirePermission, requireSystemPermission } from './middleware/rbac.middleware.js';
+import { checkPermission, PERMISSIONS } from './utils/rbac.js';
+import { createCampaign } from './controller/campaign.controller.js';
+import { getSystemCapabilities } from './controller/system.controller.js';
+import { listUsers } from './controller/user.controller.js';
 
 dotenv.config();
 
@@ -30,6 +34,53 @@ app.get('/api/protected', authMiddleware, (req, res) => {
         user: req.user
     });
 });
+
+// --- System RBAC Routes ---
+
+// 1. System Capabilities Endpoint
+app.get('/api/system/capabilities', authMiddleware, systemRoleMiddleware, getSystemCapabilities);
+
+// 2. Create Campaign (System Level Permission)
+app.post('/api/campaigns',
+    authMiddleware,
+    systemRoleMiddleware,
+    requireSystemPermission('CREATE_CAMPAIGN'),
+    createCampaign
+);
+
+// 3. List Users (For assignments) - Protected
+app.get('/api/users', authMiddleware, listUsers);
+
+// --- Campaign RBAC Routes ---
+
+// 4. Campaign Capabilities Endpoint
+app.get('/api/campaigns/:id/capabilities', authMiddleware, campaignRoleMiddleware, (req, res) => {
+    const userRoles = req.user.roles || [];
+
+    // Dynamically build capabilities object based on PERMISSIONS constant
+    const capabilities = {};
+    for (const [action, allowedRoles] of Object.entries(PERMISSIONS)) {
+        // Convert ACTION_NAME to canActionName (e.g., CREATE_CONTENT -> canCreateContent)
+        const camelCaseAction = 'can' + action.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
+        capabilities[camelCaseAction] = checkPermission(userRoles, action);
+    }
+
+    res.json(capabilities);
+});
+
+// 5. Protected Action Example (Create Content)
+app.post('/api/campaigns/:id/content',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('CREATE_CONTENT'),
+    (req, res) => {
+        res.json({
+            message: "Content created successfully",
+            campaignId: req.params.id,
+            user: req.user.email
+        });
+    }
+);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
