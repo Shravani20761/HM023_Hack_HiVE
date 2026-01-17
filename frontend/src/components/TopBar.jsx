@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/authContext';
-// TEMPORARY: Using mock auth for demo - switch back to '../appwrite/auth' when backend is ready
-import authService from '../appwrite/mockAuth';
+import authService from '../appwrite/auth';
 
 const TopBar = ({ title }) => {
     const { user, logout } = useContext(AuthContext);
