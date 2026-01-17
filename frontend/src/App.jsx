@@ -1,16 +1,17 @@
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import Login from './pages/login';
 import Signup from './pages/signup';
+import Dashboard from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
-import CampaignList from './pages/CampaignList';
-import CampaignCreate from './pages/CampaignCreate';
-import CampaignDetailLayout from './pages/CampaignDetailLayout';
-import CampaignContent from './pages/campaign-tabs/CampaignContent';
-import CampaignAssets from './pages/campaign-tabs/CampaignAssets';
-import CampaignSchedule from './pages/campaign-tabs/CampaignSchedule';
-import CampaignFeedback from './pages/campaign-tabs/CampaignFeedback';
-import CampaignAnalytics from './pages/campaign-tabs/CampaignAnalytics';
-import CampaignTeam from './pages/campaign-tabs/CampaignTeam';
+// import CampaignList from './pages/CampaignList';
+// import CampaignCreate from './pages/CampaignCreate';
+// import CampaignDetailLayout from './pages/CampaignDetailLayout';
+// import CampaignContent from './pages/campaign-tabs/CampaignContent';
+// import CampaignAssets from './pages/campaign-tabs/CampaignAssets';
+// import CampaignSchedule from './pages/campaign-tabs/CampaignSchedule';
+// import CampaignFeedback from './pages/campaign-tabs/CampaignFeedback';
+// import CampaignAnalytics from './pages/campaign-tabs/CampaignAnalytics';
+// import CampaignTeam from './pages/campaign-tabs/CampaignTeam';
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
               <Signup />
             </AuthLayout>
           } />
+          <Route path="/dashboard" element={
+            <Dashboard />
+          } />
           <Route path="/" element={
             <div className="text-center py-20">
               <h1 className="text-4xl font-bold text-primary-text mb-4">Welcome to HackHiVE</h1>
@@ -63,7 +67,7 @@ function App() {
             </div>
           } />
 
-          <Route path="/campaigns" element={
+          {/* <Route path="/campaigns" element={
             <AuthLayout authentication={true}>
               <CampaignList />
             </AuthLayout>
@@ -85,7 +89,7 @@ function App() {
             <Route path="feedback" element={<CampaignFeedback />} />
             <Route path="analytics" element={<CampaignAnalytics />} />
             <Route path="team" element={<CampaignTeam />} />
-          </Route>
+          </Route> */}
         </Routes>
       </main>
 

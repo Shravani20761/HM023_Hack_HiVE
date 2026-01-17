@@ -29,7 +29,7 @@ const Signup = () => {
             if (session) {
                 const userData = await authService.getCurrentUser();
                 if (userData) login(userData);
-                navigate("/campaigns");
+                navigate("/dashboard");
             }
         } catch (error) {
             setError(error.message);

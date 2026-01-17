@@ -7,23 +7,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#4F46E5', // Indigo-600
-        'brand-secondary': '#A855F7', // Purple-500
-        'brand-dark': '#312E81', // Indigo-900
-        'brand-light': '#E0E7FF', // Indigo-100
+        'primary-bg': '#F8FDFA', // Very light teal tint for main background
+        'secondary-bg': '#FFFFFF', // White for cards/sections
+        'primary-text': '#13272A', // Dark teal for main text
+        'secondary-text': '#2E7D78', // Medium teal for secondary text
+        'primary-accent': '#3FB3A9', // Bright teal for buttons/links
+        'secondary-accent': '#2E7D78', // Darker teal for hovers
+        'dark-contrast': '#13272A', // Deep background
 
-        'status-active': '#10B981', // Emerald-500
-        'status-active-bg': '#D1FAE5', // Emerald-100
-        'status-paused': '#F59E0B', // Amber-500
-        'status-paused-bg': '#FEF3C7', // Amber-100
-        'status-completed': '#6B7280', // Gray-500
-        'status-completed-bg': '#F3F4F6', // Gray-100
-
-        'primary-bg': '#F3F4F6', // Light Grey (Cooler)
-        'secondary-bg': '#FFFFFF', // White
-        'primary-text': '#111827', // Gray-900
-        'secondary-text': '#6B7280', // Gray-500
-        'dark-contrast': '#1E1B4B', // Very Dark Indigo
+        // RESTORED Login Colors
+        'login-bg-start': '#13272A',
+        'login-bg-middle': '#2E7D78',
+        'login-bg-end': '#3FB3A9',
+        'login-card': '#FFFFFF',
+        'login-input-bg': '#E6F6F4',
+        'login-btn-primary': '#3FB3A9',
+        'login-btn-hover': '#2E7D78',
+        'login-text-primary': '#13272A',
+        'login-text-secondary': '#5D7C7A',
+        'login-focus': '#3FB3A9',
       },
     },
   },
