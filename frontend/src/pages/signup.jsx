@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import authService from '../appwrite/auth';
+// TEMPORARY: Using mock auth for demo - switch back to '../appwrite/auth' when backend is ready
+import authService from '../appwrite/mockAuth';
 import AuthContext from '../context/authContext';
 
 const Signup = () => {
