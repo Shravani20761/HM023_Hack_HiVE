@@ -6,6 +6,10 @@ import AuthLayout from './components/AuthLayout';
 import CampaignLayout from './pages/CampaignLayout';
 import CampaignList from './pages/CampaignList';
 import CampaignCreate from './pages/CampaignCreate';
+import CampaignDetail from './pages/CampaignDetail';
+import CampaignContent from './pages/CampaignContent';
+import CampaignAssets from './pages/CampaignAssets';
+import CampaignSchedule from './pages/CampaignSchedule';
 // import CampaignList from './pages/CampaignList';
 // import CampaignCreate from './pages/CampaignCreate';
 // import CampaignDetailLayout from './pages/CampaignDetailLayout';
@@ -60,9 +64,15 @@ function App() {
 
 
 
+
+
           <Route path="/campaigns" element={<CampaignLayout />}>
             <Route index element={<CampaignList />} />
             <Route path="create" element={<CampaignCreate />} />
+            <Route path=":id" element={<CampaignDetail />} />
+            <Route path=":id/content" element={<CampaignContent />} />
+            <Route path=":id/assets" element={<CampaignAssets />} />
+            <Route path=":id/schedule" element={<CampaignSchedule />} />
           </Route>
 
           <Route path="/" element={
