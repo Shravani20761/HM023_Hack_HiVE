@@ -3,6 +3,9 @@ import Login from './pages/login';
 import Signup from './pages/signup';
 import Dashboard from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
+import CampaignLayout from './pages/CampaignLayout';
+import CampaignList from './pages/CampaignList';
+import CampaignCreate from './pages/CampaignCreate';
 // import CampaignList from './pages/CampaignList';
 // import CampaignCreate from './pages/CampaignCreate';
 // import CampaignDetailLayout from './pages/CampaignDetailLayout';
@@ -54,6 +57,14 @@ function App() {
           <Route path="/dashboard" element={
             <Dashboard />
           } />
+
+
+
+          <Route path="/campaigns" element={<CampaignLayout />}>
+            <Route index element={<CampaignList />} />
+            <Route path="create" element={<CampaignCreate />} />
+          </Route>
+
           <Route path="/" element={
             <div className="text-center py-20">
               <h1 className="text-4xl font-bold text-primary-text mb-4">Welcome to HackHiVE</h1>
