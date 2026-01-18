@@ -68,7 +68,10 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
     origin: ['http://localhost:5173', 'https://hackmatrixhackhive.pages.dev'],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
 app.use(express.json());
 app.use(cookieParser());
