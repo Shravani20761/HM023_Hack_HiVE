@@ -7,6 +7,8 @@ import { PageHeader, Card, Loader, Icons, Button, Badge, EmptyState, Modal, Inpu
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+import { aiService } from '../api/ai';
+
 const StatusConfig = {
     draft: { gradient: 'from-slate-400 to-slate-500', bg: 'from-slate-50 to-slate-100', border: 'border-slate-300', icon: '📝', label: 'Draft' },
     review: { gradient: 'from-amber-400 to-orange-500', bg: 'from-amber-50 to-orange-50', border: 'border-amber-300', icon: '👀', label: 'In Review' },
@@ -123,12 +125,16 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [aiPlatform, setAiPlatform] = useState('instagram');
+    const [isAiGenerating, setIsAiGenerating] = useState(false);
+    const [showAiConfig, setShowAiConfig] = useState(false);
 
     useEffect(() => {
         if (isOpen && content) {
             setTitle(content.title);
             setBody(content.body || '');
             fetchComments();
+            setShowAiConfig(false);
         }
     }, [isOpen, content]);
 
@@ -198,6 +204,21 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
         }
     };
 
+    const handleAiCaption = async () => {
+        setIsAiGenerating(true);
+        try {
+            const token = await getJWT();
+            const result = await aiService.generateCaption(token, content.campaign_id, title, body, aiPlatform);
+            setBody(result.caption);
+            setShowAiConfig(false);
+        } catch (error) {
+            console.error('AI Caption Error:', error);
+            alert('Failed to generate caption');
+        } finally {
+            setIsAiGenerating(false);
+        }
+    };
+
     if (!isOpen || !content) return null;
 
     const config = StatusConfig[content.status] || StatusConfig.draft;
@@ -221,7 +242,52 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Body</label>
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-bold text-slate-700">Body</label>
+                        {capabilities?.canUseAiCreator && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowAiConfig(!showAiConfig)}
+                                className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                            >
+                                <Icons.Sparkles className="w-3 h-3 mr-1" /> AI Caption
+                            </Button>
+                        )}
+                    </div>
+
+                    {showAiConfig && (
+                        <div className="mb-3 p-3 bg-purple-50 rounded-xl border border-purple-100 animate-slide-up">
+                            <label className="text-xs font-bold text-purple-700 mb-2 block">Choose Platform</label>
+                            <div className="flex gap-2">
+                                {['instagram', 'facebook', 'youtube', 'email'].map(p => (
+                                    <button
+                                        key={p}
+                                        onClick={() => setAiPlatform(p)}
+                                        className={`
+                                            px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all
+                                            ${aiPlatform === p
+                                                ? 'bg-purple-500 text-white shadow-md scale-105'
+                                                : 'bg-white text-purple-700 border border-purple-200 hover:bg-purple-100'
+                                            }
+                                        `}
+                                    >
+                                        {p}
+                                    </button>
+                                ))}
+                                <Button
+                                    variant="primary"
+                                    size="sm"
+                                    className="ml-auto"
+                                    onClick={handleAiCaption}
+                                    disabled={isAiGenerating}
+                                >
+                                    {isAiGenerating ? 'Generating...' : 'Generate'}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
                     <TextArea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Content body" rows={4} />
                 </div>
 
@@ -292,12 +358,17 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
     );
 };
 
-const CreateContentModal = ({ isOpen, onClose, onCreated, campaignId }) => {
+const CreateContentModal = ({ isOpen, onClose, onCreated, campaignId, capabilities }) => {
     const { getJWT } = useContext(AuthContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [contentType, setContentType] = useState('post');
     const [loading, setLoading] = useState(false);
+
+    // AI State
+    const [showAiInput, setShowAiInput] = useState(false);
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isAiGenerating, setIsAiGenerating] = useState(false);
 
     const contentTypes = [
         { value: 'post', label: '📱 Social Post', desc: 'Instagram, Facebook, Twitter' },
@@ -329,6 +400,23 @@ const CreateContentModal = ({ isOpen, onClose, onCreated, campaignId }) => {
         }
     };
 
+    const handleAiGenerate = async () => {
+        if (!aiPrompt.trim()) return;
+        setIsAiGenerating(true);
+        try {
+            const token = await getJWT();
+            // Use script generator for new content creation
+            const result = await aiService.generateScript(token, campaignId, aiPrompt, { type: contentType });
+            setBody(result.script);
+            setShowAiInput(false);
+        } catch (error) {
+            console.error('AI Generate Error:', error);
+            alert('Failed to generate content');
+        } finally {
+            setIsAiGenerating(false);
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -340,7 +428,37 @@ const CreateContentModal = ({ isOpen, onClose, onCreated, campaignId }) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Body</label>
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-bold text-slate-700">Body</label>
+                        {capabilities?.canUseAiCreator && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowAiInput(!showAiInput)}
+                                className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                            >
+                                <Icons.Sparkles className="w-3 h-3 mr-1" /> AI Write
+                            </Button>
+                        )}
+                    </div>
+
+                    {showAiInput && (
+                        <div className="mb-3 p-3 bg-purple-50 rounded-xl border border-purple-100 animate-slide-up">
+                            <label className="text-xs font-bold text-purple-700 mb-2 block">What should this content be about?</label>
+                            <div className="flex gap-2">
+                                <Input
+                                    value={aiPrompt}
+                                    onChange={(e) => setAiPrompt(e.target.value)}
+                                    placeholder="e.g., A promotional post for our summer sale..."
+                                    className="bg-white flex-1"
+                                />
+                                <Button onClick={handleAiGenerate} disabled={isAiGenerating || !aiPrompt.trim()}>
+                                    {isAiGenerating ? '...' : 'Go'}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
                     <TextArea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your content here..." rows={4} />
                 </div>
 
@@ -474,6 +592,7 @@ const CampaignContent = () => {
                 onClose={() => setShowCreateModal(false)}
                 onCreated={fetchData}
                 campaignId={id}
+                capabilities={capabilities}
             />
 
             {selectedContent && (

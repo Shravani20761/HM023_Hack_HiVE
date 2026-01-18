@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, Button, EmptyState } from '../components/BasicUIComponents';
+import { aiService } from '../api/ai';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -100,7 +101,7 @@ const SentimentBadge = ({ sentiment }) => {
     );
 };
 
-const FeedbackCard = ({ feedback, onClick, index }) => {
+const FeedbackCard = ({ feedback, onClick, index, onAnalyze, capabilities }) => {
     const source = SourceConfig[feedback.source] || SourceConfig.email;
     const sentiment = SentimentConfig[feedback.sentiment] || SentimentConfig.neutral;
     const status = StatusConfig[feedback.status] || StatusConfig.unread;
@@ -169,7 +170,18 @@ const FeedbackCard = ({ feedback, onClick, index }) => {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between">
-                    <SentimentBadge sentiment={feedback.sentiment} />
+                    <div className="flex items-center gap-2">
+                        <SentimentBadge sentiment={feedback.sentiment} />
+                        {capabilities?.canUseAiManager && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onAnalyze(feedback); }}
+                                className="p-1.5 rounded-full bg-white/50 hover:bg-white text-purple-500 shadow-sm transition-all"
+                                title="Re-analyze Sentiment with AI"
+                            >
+                                <Icons.Sparkles className="w-3 h-3" />
+                            </button>
+                        )}
+                    </div>
 
                     <div className="flex items-center gap-2">
                         <span className={`
@@ -259,6 +271,8 @@ const CampaignFeedback = () => {
     const [stats, setStats] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all');
     const [filterSentiment, setFilterSentiment] = useState('all');
+    const [analyzingId, setAnalyzingId] = useState(null);
+    const [capabilities, setCapabilities] = useState({});
 
     useEffect(() => {
         fetchData();
@@ -278,6 +292,10 @@ const CampaignFeedback = () => {
 
             const statsRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/feedback/stats/summary`, config).catch(() => ({ data: {} }));
             setStats(statsRes.data);
+
+            // Fetch capabilities
+            const capRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/capabilities`, config);
+            setCapabilities(capRes.data);
         } catch (error) {
             console.error('Error fetching feedback:', error);
         } finally {
@@ -285,7 +303,26 @@ const CampaignFeedback = () => {
         }
     };
 
-    if (loading) return (
+    const handleAnalyze = async (feedbackItem) => {
+        if (analyzingId) return;
+        setAnalyzingId(feedbackItem.id);
+        try {
+            const token = await getJWT();
+            const result = await aiService.analyzeSentiment(token, id, feedbackItem.message, feedbackItem.id);
+            // Optimistic update
+            setFeedback(prev => prev.map(f =>
+                f.id === feedbackItem.id ? { ...f, sentiment: result.sentiment || result } : f
+            ));
+            fetchData();
+        } catch (error) {
+            console.error('Error analyzing sentiment:', error);
+            alert('Failed to analyze sentiment');
+        } finally {
+            setAnalyzingId(null);
+        }
+    };
+
+    if (loading && !analyzingId) return (
         <CampaignLayout campaignName={campaignName}>
             <div className="flex items-center justify-center h-64">
                 <Loader />
@@ -439,7 +476,9 @@ const CampaignFeedback = () => {
                                     key={item.id}
                                     feedback={item}
                                     index={index}
-                                    onClick={() => {}}
+                                    onClick={() => { }}
+                                    onAnalyze={handleAnalyze}
+                                    capabilities={capabilities}
                                 />
                             ))}
                         </div>
