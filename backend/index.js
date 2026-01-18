@@ -81,6 +81,10 @@ app.get('/', (req, res) => {
     res.send('HackMatrix Backend is running!');
 });
 
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
 // Protected Route Example
 app.get('/api/protected', authMiddleware, (req, res) => {
     res.json({
