@@ -1,126 +1,83 @@
 import pool from '../config/db.js';
 
-// Mock OpenAI integration - can be replaced with real OpenAI SDK
-// import OpenAI from 'openai';
-// const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import OpenAI from 'openai';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const generateScript = async (prompt, context) => {
     try {
-        // For now, return a mock script
-        // When OpenAI is fully integrated:
-        // const response = await openai.chat.completions.create({
-        //   model: 'gpt-4o-mini',
-        //   messages: [
-        //     {
-        //       role: 'system',
-        //       content: 'You are a creative video script writer for marketing campaigns...'
-        //     },
-        //     {
-        //       role: 'user',
-        //       content: prompt
-        //     }
-        //   ],
-        //   max_tokens: 1000
-        // });
-        // return response.choices[0].message.content;
-
-        // Mock implementation
-        return `
-Here's a creative video script based on your request:
-
-[Opening Scene - Vibrant Background]
-"Ready to transform your ${context?.campaignType || 'business'}?"
-
-[Main Message]
-${prompt}
-
-[Call to Action]
-"Join thousands of satisfied customers today!"
-
-[Closing]
-"Your success is our mission."
-        `.trim();
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'You are a creative video script writer for marketing campaigns. Format the output with clear Scene headings, Visual descriptions, and Audio/Dialogue lines.'
+                },
+                {
+                    role: 'user',
+                    content: `Context: ${JSON.stringify(context || {})}\n\nTask: ${prompt}`
+                }
+            ],
+            max_tokens: 1000
+        });
+        return response.choices[0].message.content;
 
     } catch (error) {
         console.error("Generate Script Error:", error);
-        throw new Error("Failed to generate script");
+        throw new Error("Failed to generate script: " + error.message);
     }
 };
 
 export const generateCaption = async (contentTitle, contentBody, platform) => {
     try {
-        // For now, return platform-specific captions
-        // When OpenAI is integrated:
-        // const response = await openai.chat.completions.create({
-        //   model: 'gpt-4o-mini',
-        //   messages: [
-        //     {
-        //       role: 'system',
-        //       content: `You are a social media caption writer. Generate a ${platform}-appropriate caption...`
-        //     },
-        //     {
-        //       role: 'user',
-        //       content: `Title: ${contentTitle}\nContent: ${contentBody}`
-        //     }
-        //   ],
-        //   max_tokens: platform === 'instagram' ? 300 : 500
-        // });
-        // return response.choices[0].message.content;
-
-        // Mock implementation
-        const captions = {
-            instagram: `✨ ${contentTitle}\n\n${contentBody.substring(0, 100)}...\n\n#marketing #digital #socialmedia 🚀`,
-            facebook: `${contentTitle}\n\n${contentBody}\n\nLearn more in the comments! 👇`,
-            youtube: `${contentTitle}\n\nWatch to learn: ${contentBody.substring(0, 80)}...\n\nDon't forget to like and subscribe!`,
-            email: `Subject: ${contentTitle}\n\nHey!\n\n${contentBody}\n\nBest regards!`
-        };
-
-        return captions[platform] || captions.instagram;
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: `You are a social media caption writer. Generate a ${platform}-appropriate caption with emojis and hashtags.`
+                },
+                {
+                    role: 'user',
+                    content: `Title: ${contentTitle}\nContent: ${contentBody}`
+                }
+            ],
+            max_tokens: platform === 'instagram' ? 300 : 500
+        });
+        return response.choices[0].message.content;
 
     } catch (error) {
         console.error("Generate Caption Error:", error);
-        throw new Error("Failed to generate caption");
+        throw new Error("Failed to generate caption: " + error.message);
     }
 };
 
 export const analyzeSentiment = async (text) => {
     try {
-        // For now, use simple heuristics
-        // When OpenAI is integrated:
-        // const response = await openai.chat.completions.create({
-        //   model: 'gpt-4o-mini',
-        //   messages: [
-        //     {
-        //       role: 'system',
-        //       content: 'Analyze the sentiment of the following text. Respond with only: positive, neutral, or negative'
-        //     },
-        //     {
-        //       role: 'user',
-        //       content: text
-        //     }
-        //   ]
-        // });
-        // return response.choices[0].message.content.toLowerCase().trim();
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Analyze the sentiment of the following text. Respond with EXATCLY one word: "positive", "neutral", or "negative".'
+                },
+                {
+                    role: 'user',
+                    content: text
+                }
+            ]
+        });
 
-        // Mock implementation using simple heuristics
-        const positiveWords = ['love', 'great', 'awesome', 'amazing', 'excellent', 'wonderful', 'fantastic', 'good', 'best'];
-        const negativeWords = ['hate', 'terrible', 'awful', 'bad', 'horrible', 'worst', 'poor', 'useless', 'waste'];
-
-        const lowerText = text.toLowerCase();
-        const positiveCount = positiveWords.filter(word => lowerText.includes(word)).length;
-        const negativeCount = negativeWords.filter(word => lowerText.includes(word)).length;
-
-        if (positiveCount > negativeCount) {
-            return 'positive';
-        } else if (negativeCount > positiveCount) {
-            return 'negative';
-        } else {
-            return 'neutral';
+        const sentiment = response.choices[0].message.content.toLowerCase().trim();
+        // Validate output
+        if (['positive', 'neutral', 'negative'].includes(sentiment)) {
+            return sentiment;
         }
+        return 'neutral'; // Fallback
 
     } catch (error) {
         console.error("Analyze Sentiment Error:", error);
-        throw new Error("Failed to analyze sentiment");
+        throw new Error("Failed to analyze sentiment: " + error.message);
     }
 };
 

@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, Button, Badge, EmptyState, Modal, Input } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const ChannelConfig = {
     instagram: {
@@ -188,8 +186,8 @@ const CreateScheduleModal = ({ isOpen, onClose, onCreated, campaignId, contents 
         setLoading(true);
         try {
             const token = await getJWT();
-            await axios.post(
-                `${API_BASE_URL}/campaigns/${campaignId}/schedules`,
+            await api.post(
+                `/api/campaigns/${campaignId}/schedules`,
                 { contentId, channel, scheduledTime },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -352,13 +350,13 @@ const CampaignSchedule = () => {
             const token = await getJWT();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config);
+            const nameRes = await api.get(`/api/campaigns/${id}`, config);
             setCampaignName(nameRes.data.name);
 
-            const schedulesRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/schedules`, config).catch(() => ({ data: [] }));
+            const schedulesRes = await api.get(`/api/campaigns/${id}/schedules`, config).catch(() => ({ data: [] }));
             setSchedules(schedulesRes.data || []);
 
-            const contentsRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/content`, config).catch(() => ({ data: [] }));
+            const contentsRes = await api.get(`/api/campaigns/${id}/content`, config).catch(() => ({ data: [] }));
             setContents(contentsRes.data || []);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -466,7 +464,7 @@ const CampaignSchedule = () => {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {upcomingSchedules.map((schedule, index) => (
-                                        <ScheduleCard key={schedule.id} schedule={schedule} index={index} onClick={() => {}} />
+                                        <ScheduleCard key={schedule.id} schedule={schedule} index={index} onClick={() => { }} />
                                     ))}
                                 </div>
                             </div>
@@ -486,7 +484,7 @@ const CampaignSchedule = () => {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {pastSchedules.map((schedule, index) => (
-                                        <ScheduleCard key={schedule.id} schedule={schedule} index={index} onClick={() => {}} />
+                                        <ScheduleCard key={schedule.id} schedule={schedule} index={index} onClick={() => { }} />
                                     ))}
                                 </div>
                             </div>

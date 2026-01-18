@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/authContext';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 // --- Icons ---
 const IconPlus = () => (
@@ -66,7 +64,7 @@ const CampaignCreate = () => {
                 };
 
                 // Check Capabilities
-                const capRes = await axios.get(`${API_BASE_URL}/system/capabilities`, config);
+                const capRes = await api.get('/api/system/capabilities', config);
                 if (!capRes.data.canCreateCampaign) {
                     setUnauthorized(true);
                     setLoading(false);
@@ -74,7 +72,7 @@ const CampaignCreate = () => {
                 }
 
                 // Fetch Users
-                const userRes = await axios.get(`${API_BASE_URL}/users`, config);
+                const userRes = await api.get('/api/users', config);
                 setUsers(userRes.data.users);
 
                 setLoading(false);
@@ -142,7 +140,7 @@ const CampaignCreate = () => {
                 withCredentials: true
             };
 
-            await axios.post(`${API_BASE_URL}/campaigns`, { ...formData, team }, config);
+            await api.post('/api/campaigns', { ...formData, team }, config);
 
             navigate('/campaigns');
         } catch (error) {
@@ -302,8 +300,8 @@ const CampaignCreate = () => {
                                                     key={role.id}
                                                     onClick={() => handleRoleToggle(role.id)}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all transform active:scale-95 ${isSelected
-                                                            ? `${role.color} border-current shadow-sm`
-                                                            : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                                                        ? `${role.color} border-current shadow-sm`
+                                                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
                                                         }`}
                                                 >
                                                     {role.label}

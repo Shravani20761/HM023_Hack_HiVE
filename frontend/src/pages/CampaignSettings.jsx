@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, EmptyState } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const CampaignSettings = () => {
     const { id } = useParams();
@@ -18,7 +16,7 @@ const CampaignSettings = () => {
             try {
                 const token = await getJWT();
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config).catch(() => ({ data: { name: 'Campaign' } }));
+                const nameRes = await api.get(`/api/campaigns/${id}`, config).catch(() => ({ data: { name: 'Campaign' } }));
                 setCampaignName(nameRes.data.name);
                 setLoading(false);
             } catch (error) {

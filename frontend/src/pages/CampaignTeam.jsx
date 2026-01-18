@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Card, Loader, Icons, Button, Badge, EmptyState } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const CampaignTeam = () => {
     const { id } = useParams();
@@ -22,17 +20,17 @@ const CampaignTeam = () => {
                 const config = { headers: { Authorization: `Bearer ${token}` } };
 
                 // 1. Get Campaign Capabilities
-                const capRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/capabilities`, config).catch(() => ({ data: { canAssignRoles: false } }));
+                const capRes = await api.get(`/api/campaigns/${id}/capabilities`, config).catch(() => ({ data: { canAssignRoles: false } }));
                 setCanAssign(capRes.data.canAssignRoles);
 
                 // 2. Get Team
                 // Note: API might vary, assuming /campaigns/:id (which might return team) or /campaigns/:id/team
                 // The plan says GET /api/campaigns/:id/team
-                const teamRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/team`, config).catch(() => ({ data: [] }));
+                const teamRes = await api.get(`/api/campaigns/${id}/team`, config).catch(() => ({ data: [] }));
                 setTeam(teamRes.data || []);
 
                 // 3. Get generic info for layout
-                const campRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config).catch(() => ({ data: { name: 'Campaign' } }));
+                const campRes = await api.get(`/api/campaigns/${id}`, config).catch(() => ({ data: { name: 'Campaign' } }));
                 setCampaignName(campRes.data.name);
 
                 setLoading(false);
