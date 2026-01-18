@@ -24,10 +24,22 @@ HackMatrix is a powerful, full-stack web application designed to streamline the 
 - **Feedback Loops:** internal commenting and feedback systems to refine content.
 - **Version History:** Track changes and revert to previous versions if needed.
 
-### 4. 🤖 AI-Powered Tools (OpenAI)
-- **Script Writer:** Generate engaging video scripts automatically.
-- **Caption Helper:** Create optimized social media captions.
-- **Sentiment Analysis:** Analyze audience feedback to gauge reception.
+### 4. 🤖 AI-Powered Marketing Studio
+We are building a comprehensive AI layer to assist every role in the marketing team.
+
+#### **Available Now (Current Implementation)**
+These tools are fully functional and integrated into the workflow:
+- **AI Script Writer:** Generates engaging video scripts based on campaign context and prompts.
+- **AI Caption Helper:** Creates platform-optimized captions (Instagram, YouTube, etc.) from content drafts.
+- **AI Sentiment Analysis:** Automatically analyzes audience feedback to detect positive, negative, or neutral sentiment.
+
+#### **Coming Next (Future Roadmap)**
+Based on our detailed [Functional Specification](ai_powered_marketing_studio_functional_specification_detailed%20(2).md), we are adding specialized tools for each role:
+- **Admin:** *AI Campaign Planner* (Goals to Themes), *Workload Analyzer* (Bottleneck detection).
+- **Creator:** *AI Research Assistant* (Trend/Keyword analysis).
+- **Editor:** *Subtitle Generator*, *Thumbnail Generator*, *Quality Checker*.
+- **Marketer:** *Best-Time Scheduler*, *AI Email Generator* (HTML emails), *Tone Adapter*.
+- **Manager:** *Trend Detector*, *Auto-Reply Assistant*.
 
 ### 5. 📹 YouTube Integration (Deep Integration)
 > [!NOTE]
