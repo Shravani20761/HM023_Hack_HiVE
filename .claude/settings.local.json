@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node scripts/migrate.js:*)"
+      "Bash(node scripts/migrate.js:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

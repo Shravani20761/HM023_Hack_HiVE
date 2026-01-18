@@ -220,3 +220,98 @@ CREATE INDEX IF NOT EXISTS idx_analytics_content ON analytics(content_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_campaign ON analytics(campaign_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_usage_campaign ON ai_usage(campaign_id);
+
+-- ============================================
+-- YOUTUBE INTEGRATION TABLES
+-- ============================================
+
+-- 17. youtube_connections - Store YouTube OAuth tokens per campaign
+CREATE TABLE IF NOT EXISTS youtube_connections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  channel_id TEXT NOT NULL,
+  channel_title TEXT,
+  channel_thumbnail TEXT,
+  subscriber_count INTEGER DEFAULT 0,
+  video_count INTEGER DEFAULT 0,
+  view_count BIGINT DEFAULT 0,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  token_expiry TIMESTAMP NOT NULL,
+  connected_by UUID REFERENCES users(id),
+  connected_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 18. youtube_videos - Cached video data from YouTube
+CREATE TABLE IF NOT EXISTS youtube_videos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE NOT NULL,
+  youtube_video_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  thumbnail_url TEXT,
+  privacy_status TEXT DEFAULT 'private', -- 'public', 'private', 'unlisted'
+  publish_date TIMESTAMP,
+  duration TEXT,
+  view_count INTEGER DEFAULT 0,
+  like_count INTEGER DEFAULT 0,
+  comment_count INTEGER DEFAULT 0,
+  tags TEXT[], -- Array of tags
+  category_id TEXT,
+  is_uploaded_via_app BOOLEAN DEFAULT FALSE,
+  synced_at TIMESTAMP DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE (campaign_id, youtube_video_id)
+);
+
+-- 19. youtube_scheduled_uploads - Videos scheduled for upload
+CREATE TABLE IF NOT EXISTS youtube_scheduled_uploads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE NOT NULL,
+  content_id UUID REFERENCES content(id) ON DELETE SET NULL,
+  asset_id UUID REFERENCES assets(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  tags TEXT[],
+  category_id TEXT DEFAULT '22', -- Default to "People & Blogs"
+  privacy_status TEXT DEFAULT 'private',
+  scheduled_time TIMESTAMP NOT NULL,
+  status TEXT DEFAULT 'pending', -- 'pending', 'uploading', 'processing', 'published', 'failed'
+  youtube_video_id TEXT, -- Set after successful upload
+  error_message TEXT,
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 20. youtube_analytics - YouTube-specific analytics
+CREATE TABLE IF NOT EXISTS youtube_analytics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE NOT NULL,
+  youtube_video_id TEXT,
+  date DATE NOT NULL,
+  views INTEGER DEFAULT 0,
+  watch_time_minutes DECIMAL(10, 2) DEFAULT 0,
+  average_view_duration DECIMAL(10, 2) DEFAULT 0,
+  likes INTEGER DEFAULT 0,
+  dislikes INTEGER DEFAULT 0,
+  comments INTEGER DEFAULT 0,
+  shares INTEGER DEFAULT 0,
+  subscribers_gained INTEGER DEFAULT 0,
+  subscribers_lost INTEGER DEFAULT 0,
+  estimated_revenue DECIMAL(10, 4) DEFAULT 0,
+  ctr DECIMAL(5, 2) DEFAULT 0, -- Click-through rate percentage
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE (campaign_id, youtube_video_id, date)
+);
+
+-- Create indexes for YouTube tables
+CREATE INDEX IF NOT EXISTS idx_youtube_connections_campaign ON youtube_connections(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_youtube_videos_campaign ON youtube_videos(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_youtube_videos_youtube_id ON youtube_videos(youtube_video_id);
+CREATE INDEX IF NOT EXISTS idx_youtube_scheduled_campaign ON youtube_scheduled_uploads(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_youtube_scheduled_status ON youtube_scheduled_uploads(status);
+CREATE INDEX IF NOT EXISTS idx_youtube_analytics_campaign ON youtube_analytics(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_youtube_analytics_date ON youtube_analytics(date);

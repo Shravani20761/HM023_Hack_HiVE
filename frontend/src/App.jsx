@@ -15,8 +15,10 @@ import CampaignSchedule from './pages/CampaignSchedule';
 import CampaignFeedback from './pages/CampaignFeedback';
 import CampaignAnalytics from './pages/CampaignAnalytics';
 import CampaignSettings from './pages/CampaignSettings';
-
-// ... (existing imports)
+import YouTubeDashboard from './pages/YouTubeDashboard';
+import YouTubeVideos from './pages/YouTubeVideos';
+import YouTubeSchedule from './pages/YouTubeSchedule';
+import YouTubeAnalytics from './pages/YouTubeAnalytics';
 
 function App() {
   return (
@@ -68,6 +70,12 @@ function App() {
           <Route path=":id/analytics" element={<CampaignAnalytics />} />
           <Route path=":id/team" element={<CampaignTeam />} />
           <Route path=":id/settings" element={<CampaignSettings />} />
+
+          {/* YouTube Integration Routes */}
+          <Route path=":id/youtube" element={<YouTubeDashboard />} />
+          <Route path=":id/youtube/videos" element={<YouTubeVideos />} />
+          <Route path=":id/youtube/schedule" element={<YouTubeSchedule />} />
+          <Route path=":id/youtube/analytics" element={<YouTubeAnalytics />} />
         </Route>
       </Routes>
 
