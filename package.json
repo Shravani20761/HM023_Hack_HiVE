@@ -1,0 +1,24 @@
+{
+  "name": "hackmatrix",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shravani20761/HM023_Hack_HiVE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shravani20761/HM023_Hack_HiVE/issues"
+  },
+  "homepage": "https://github.com/Shravani20761/HM023_Hack_HiVE#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
