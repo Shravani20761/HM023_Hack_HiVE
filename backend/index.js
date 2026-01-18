@@ -59,6 +59,23 @@ import {
     getMetricsOverTime,
     getTopContent
 } from './controller/analytics.controller.js';
+import {
+    getOAuthUrl,
+    handleOAuthCallback,
+    getConnectionStatus,
+    disconnectYouTube,
+    getChannelDetails,
+    listVideos,
+    getVideo,
+    updateVideo,
+    createScheduledUpload,
+    listScheduledUploads,
+    getScheduledUpload,
+    updateScheduledUpload,
+    deleteScheduledUpload,
+    getYouTubeAnalytics,
+    getVideoCategories
+} from './controller/youtube.controller.js';
 
 dotenv.config();
 
@@ -549,6 +566,164 @@ app.get('/api/campaigns/:id/analytics/top-content',
     (req, res) => {
         req.params.campaignId = req.params.id;
         getTopContent(req, res);
+    }
+);
+
+// --- YouTube Integration Routes ---
+
+// 44. Get YouTube OAuth URL
+app.get('/api/campaigns/:id/youtube/auth',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('CONNECT_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getOAuthUrl(req, res);
+    }
+);
+
+// 45. YouTube OAuth Callback (No auth middleware - handles its own state)
+app.get('/auth/youtube/callback', handleOAuthCallback);
+
+// 46. Get YouTube Connection Status
+app.get('/api/campaigns/:id/youtube/status',
+    authMiddleware,
+    campaignRoleMiddleware,
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getConnectionStatus(req, res);
+    }
+);
+
+// 47. Disconnect YouTube
+app.delete('/api/campaigns/:id/youtube/disconnect',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('DISCONNECT_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        disconnectYouTube(req, res);
+    }
+);
+
+// 48. Get YouTube Channel Details
+app.get('/api/campaigns/:id/youtube/channel',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getChannelDetails(req, res);
+    }
+);
+
+// 49. List YouTube Videos
+app.get('/api/campaigns/:id/youtube/videos',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        listVideos(req, res);
+    }
+);
+
+// 50. Get Single YouTube Video
+app.get('/api/campaigns/:id/youtube/videos/:videoId',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getVideo(req, res);
+    }
+);
+
+// 51. Update YouTube Video
+app.patch('/api/campaigns/:id/youtube/videos/:videoId',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('MANAGE_YOUTUBE_VIDEOS'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        updateVideo(req, res);
+    }
+);
+
+// 52. Get Video Categories
+app.get('/api/campaigns/:id/youtube/categories',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getVideoCategories(req, res);
+    }
+);
+
+// 53. Create Scheduled Upload
+app.post('/api/campaigns/:id/youtube/scheduled-uploads',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('SCHEDULE_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        createScheduledUpload(req, res);
+    }
+);
+
+// 54. List Scheduled Uploads
+app.get('/api/campaigns/:id/youtube/scheduled-uploads',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        listScheduledUploads(req, res);
+    }
+);
+
+// 55. Get Single Scheduled Upload
+app.get('/api/campaigns/:id/youtube/scheduled-uploads/:uploadId',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getScheduledUpload(req, res);
+    }
+);
+
+// 56. Update Scheduled Upload
+app.patch('/api/campaigns/:id/youtube/scheduled-uploads/:uploadId',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('SCHEDULE_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        updateScheduledUpload(req, res);
+    }
+);
+
+// 57. Delete Scheduled Upload
+app.delete('/api/campaigns/:id/youtube/scheduled-uploads/:uploadId',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('SCHEDULE_YOUTUBE'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        deleteScheduledUpload(req, res);
+    }
+);
+
+// 58. Get YouTube Analytics
+app.get('/api/campaigns/:id/youtube/analytics',
+    authMiddleware,
+    campaignRoleMiddleware,
+    requirePermission('VIEW_YOUTUBE_ANALYTICS'),
+    (req, res) => {
+        req.params.campaignId = req.params.id;
+        getYouTubeAnalytics(req, res);
     }
 );
 

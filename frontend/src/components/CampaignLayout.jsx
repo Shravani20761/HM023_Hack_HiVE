@@ -137,6 +137,19 @@ const CampaignLayout = ({ children, campaignName = "Loading..." }) => {
                         active={isActive(`/campaigns/${id}/feedback`)}
                     />
 
+                    <p className="px-4 mt-6 mb-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <span className="w-4 h-0.5 bg-gradient-to-r from-red-300 to-orange-300 rounded-full"></span>
+                        YouTube
+                    </p>
+
+                    <SidebarItem
+                        to={`/campaigns/${id}/youtube`}
+                        icon={Icons.Video}
+                        label="YouTube Studio"
+                        active={location.pathname.includes(`/campaigns/${id}/youtube`)}
+                        color="amber"
+                    />
+
                     <div className="my-6 mx-4 border-t border-purple-100"></div>
 
                     <SidebarItem

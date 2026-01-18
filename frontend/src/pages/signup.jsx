@@ -30,7 +30,7 @@ const Signup = () => {
             if (session) {
                 const userData = await authService.getCurrentUser();
                 if (userData) login(userData);
-                navigate("/");
+                navigate("/dashboard");
             }
         } catch (error) {
             setError(error.message);
