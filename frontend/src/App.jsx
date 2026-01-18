@@ -42,7 +42,7 @@ function App() {
         } />
 
         {/* Protected Home Page at Root */}
-        <Route path="/dashboard" element={
+        <Route path="/" element={
           <AuthLayout authentication={true}>
             <Home />
           </AuthLayout>
