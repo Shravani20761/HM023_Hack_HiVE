@@ -122,7 +122,7 @@ With this strong foundation, our future AI assistants won't just generate text; 
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/your-username/hackmatrix.git
+    git clone https://github.com/Shravani20761/HM023_Hack_HiVE.git
     cd hackmatrix
     ```
 
@@ -140,6 +140,10 @@ With this strong foundation, our future AI assistants won't just generate text; 
     npm install
     npm run dev
     ```
+4. **To run the Project in one go (Frontend + Backend) (Run in Root Directory)**
+   ```bash
+   npm run dev
+   ```
 
 ---
 *Built with ❤️ by the HackHive Team*
