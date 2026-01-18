@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import AuthContext from '../context/authContext';
 import { PageHeader, Card, Loader, EmptyState, Icons, Button } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const Dashboard = () => {
     const { getJWT } = useContext(AuthContext);
@@ -16,7 +14,7 @@ const Dashboard = () => {
                 const token = await getJWT();
                 const config = { headers: { Authorization: `Bearer ${token}` } };
                 // Using campaigns endpoint for now as dashboard specific might not be ready
-                const res = await axios.get(`${API_BASE_URL}/campaigns`, config);
+                const res = await api.get('/api/campaigns', config);
                 setData({ campaigns: res.data || [] });
                 setLoading(false);
             } catch (error) {

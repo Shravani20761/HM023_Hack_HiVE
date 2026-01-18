@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, Card, EmptyState } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const MetricCard = ({ icon: Icon, label, value, color = 'blue' }) => {
     const colorGradients = {
@@ -56,16 +54,16 @@ const CampaignAnalytics = () => {
             const token = await getJWT();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config);
+            const nameRes = await api.get(`/api/campaigns/${id}`, config);
             setCampaignName(nameRes.data.name);
 
-            const analyticsRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/analytics`, config).catch(() => ({ data: [] }));
+            const analyticsRes = await api.get(`/api/campaigns/${id}/analytics`, config).catch(() => ({ data: [] }));
             setAnalytics(analyticsRes.data || []);
 
-            const channelRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/analytics/channels`, config).catch(() => ({ data: [] }));
+            const channelRes = await api.get(`/api/campaigns/${id}/analytics/channels`, config).catch(() => ({ data: [] }));
             setChannelPerformance(channelRes.data || []);
 
-            const topRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/analytics/top-content?limit=5`, config).catch(() => ({ data: [] }));
+            const topRes = await api.get(`/api/campaigns/${id}/analytics/top-content?limit=5`, config).catch(() => ({ data: [] }));
             setTopContent(topRes.data || []);
         } catch (error) {
             console.error('Error fetching analytics:', error);

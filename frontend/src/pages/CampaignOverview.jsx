@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Card, Loader, Icons, Badge } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const CampaignOverview = () => {
     const { id } = useParams();
@@ -23,7 +21,7 @@ const CampaignOverview = () => {
                 // Let's try fetching list and finding for now if explicit endpoint fails, OR just assume explicit endpoint works as per Plan.
 
                 // NOTE: In strict RBAC plan, access is /api/campaigns/:id
-                const res = await axios.get(`${API_BASE_URL}/campaigns/${id}`, {
+                const res = await api.get(`/api/campaigns/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, Button, EmptyState } from '../components/BasicUIComponents';
 import { aiService } from '../api/ai';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const SentimentConfig = {
     positive: {
@@ -284,17 +282,17 @@ const CampaignFeedback = () => {
             const token = await getJWT();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config);
+            const nameRes = await api.get(`/api/campaigns/${id}`, config);
             setCampaignName(nameRes.data.name);
 
-            const feedbackRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/feedback`, config).catch(() => ({ data: [] }));
+            const feedbackRes = await api.get(`/api/campaigns/${id}/feedback`, config).catch(() => ({ data: [] }));
             setFeedback(feedbackRes.data || []);
 
-            const statsRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/feedback/stats/summary`, config).catch(() => ({ data: {} }));
+            const statsRes = await api.get(`/api/campaigns/${id}/feedback/stats/summary`, config).catch(() => ({ data: {} }));
             setStats(statsRes.data);
 
             // Fetch capabilities
-            const capRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/capabilities`, config);
+            const capRes = await api.get(`/api/campaigns/${id}/capabilities`, config);
             setCapabilities(capRes.data);
         } catch (error) {
             console.error('Error fetching feedback:', error);

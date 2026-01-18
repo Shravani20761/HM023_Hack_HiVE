@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Loader, Icons, Button, Badge, EmptyState, Modal, Input } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const FileTypeConfig = {
     image: {
@@ -277,8 +275,8 @@ const UploadModal = ({ isOpen, onClose, onUpload, campaignId }) => {
             if (file.type.startsWith('image/')) fileType = 'image';
             else if (file.type.startsWith('video/')) fileType = 'video';
 
-            await axios.post(
-                `${API_BASE_URL}/campaigns/${campaignId}/assets`,
+            await api.post(
+                `/api/campaigns/${campaignId}/assets`,
                 {
                     imageKitFileId: `temp_${Date.now()}`,
                     fileName: file.name,
@@ -444,10 +442,10 @@ const CampaignAssets = () => {
             const token = await getJWT();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config);
+            const nameRes = await api.get(`/api/campaigns/${id}`, config);
             setCampaignName(nameRes.data.name);
 
-            const assetsRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/assets`, config);
+            const assetsRes = await api.get(`/api/campaigns/${id}/assets`, config);
             setAssets(assetsRes.data);
         } catch (error) {
             console.error('Error fetching assets:', error);
@@ -461,8 +459,8 @@ const CampaignAssets = () => {
 
         try {
             const token = await getJWT();
-            await axios.delete(
-                `${API_BASE_URL}/campaigns/${id}/assets/${assetId}`,
+            await api.delete(
+                `/api/campaigns/${id}/assets/${assetId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             fetchData();

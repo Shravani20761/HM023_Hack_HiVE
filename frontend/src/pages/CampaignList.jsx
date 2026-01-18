@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import { PageHeader, Card, Loader, EmptyState, Icons, Button, Badge } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 const CampaignList = () => {
     const { getJWT } = useContext(AuthContext);
@@ -20,8 +18,8 @@ const CampaignList = () => {
                 const config = { headers: { Authorization: `Bearer ${token}` } };
 
                 const [campRes, capRes] = await Promise.all([
-                    axios.get(`${API_BASE_URL}/campaigns`, config),
-                    axios.get(`${API_BASE_URL}/system/capabilities`, config)
+                    api.get('/api/campaigns', config),
+                    api.get('/api/system/capabilities', config)
                 ]);
 
                 setCampaigns(campRes.data || []);

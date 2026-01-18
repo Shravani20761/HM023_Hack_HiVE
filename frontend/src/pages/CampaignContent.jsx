@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import CampaignLayout from '../components/CampaignLayout';
 import { PageHeader, Card, Loader, Icons, Button, Badge, EmptyState, Modal, Input, TextArea, StatusBadge } from '../components/BasicUIComponents';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import api from '../services/api.service';
 
 import { aiService } from '../api/ai';
 
@@ -141,8 +139,8 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
     const fetchComments = async () => {
         try {
             const token = await getJWT();
-            const res = await axios.get(
-                `${API_BASE_URL}/campaigns/${content.campaign_id}/content/${content.id}/comments`,
+            const res = await api.get(
+                `/api/campaigns/${content.campaign_id}/content/${content.id}/comments`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setComments(res.data);
@@ -156,8 +154,8 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
         setLoading(true);
         try {
             const token = await getJWT();
-            await axios.patch(
-                `${API_BASE_URL}/campaigns/${content.campaign_id}/content/${content.id}`,
+            await api.patch(
+                `/api/campaigns/${content.campaign_id}/content/${content.id}`,
                 { title, body },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -175,8 +173,8 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
         setLoading(true);
         try {
             const token = await getJWT();
-            await axios.post(
-                `${API_BASE_URL}/campaigns/${content.campaign_id}/content/${content.id}/comments`,
+            await api.post(
+                `/api/campaigns/${content.campaign_id}/content/${content.id}/comments`,
                 { comment, isInternal: true },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -194,7 +192,7 @@ const ContentDetailModal = ({ isOpen, content, onClose, onUpdate, onStatusChange
         try {
             const token = await getJWT();
             const endpoint = `/campaigns/${content.campaign_id}/content/${content.id}/${newStatus}`;
-            await axios.patch(`${API_BASE_URL}${endpoint}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+            await api.patch(`/api${endpoint}`, {}, { headers: { Authorization: `Bearer ${token}` } });
             onStatusChange();
             onClose();
         } catch (error) {
@@ -383,8 +381,8 @@ const CreateContentModal = ({ isOpen, onClose, onCreated, campaignId, capabiliti
         setLoading(true);
         try {
             const token = await getJWT();
-            await axios.post(
-                `${API_BASE_URL}/campaigns/${campaignId}/content`,
+            await api.post(
+                `/api/campaigns/${campaignId}/content`,
                 { title, body, contentType },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -518,13 +516,13 @@ const CampaignContent = () => {
             const token = await getJWT();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nameRes = await axios.get(`${API_BASE_URL}/campaigns/${id}`, config);
+            const nameRes = await api.get(`/api/campaigns/${id}`, config);
             setCampaignName(nameRes.data.name);
 
-            const contentRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/content`, config);
+            const contentRes = await api.get(`/api/campaigns/${id}/content`, config);
             setContents(contentRes.data);
 
-            const capRes = await axios.get(`${API_BASE_URL}/campaigns/${id}/capabilities`, config);
+            const capRes = await api.get(`/api/campaigns/${id}/capabilities`, config);
             setCapabilities(capRes.data);
         } catch (error) {
             console.error('Error fetching data:', error);
