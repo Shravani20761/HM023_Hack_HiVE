@@ -1,8 +1,8 @@
-import Home from './pages/Home';
+import Home from './pages/home.jsx';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Login from './pages/login.jsx';
+import Signup from './pages/signup.jsx';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import CampaignList from './pages/CampaignList';
