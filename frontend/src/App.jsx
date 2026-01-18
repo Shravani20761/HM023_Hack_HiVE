@@ -1,4 +1,4 @@
-import Home from './pages/home';
+import Home from './pages/home.jsx';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
 import Login from './pages/login';
