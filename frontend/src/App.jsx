@@ -1,5 +1,5 @@
 import Home from './pages/home.jsx';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
 import Login from './pages/login.jsx';
 import Signup from './pages/signup.jsx';
@@ -44,7 +44,7 @@ function App() {
         {/* Protected Home Page at Root */}
         <Route path="/" element={
           <AuthLayout authentication={true}>
-            <Home />
+            <Navigate to="/dashboard" replace />
           </AuthLayout>
         } />
 
