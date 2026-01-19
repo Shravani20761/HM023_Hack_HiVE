@@ -140,6 +140,29 @@ With this strong foundation, our future AI assistants won't just generate text; 
     npm install
     npm run dev
     ```
+4.  **Login Credentials**
+    Admin Login Credentials
+    ```bash
+    Email: test@gmail.com
+    Password: 12345678
+    ```
+    Editor Login Credentials
+    ```bash
+    Email: admin@demo.com
+    Password: 12345678
+    ```
+    Creator Login Credentials
+    ```bash
+    Email: admin@sih.com
+    Password: 12345678
+    ```
+    Marketer Login Credentials
+    ```bash
+    Email: uploader@demo.com
+    Password: 12345678
+    ```
+We had some problem with the appwrite account, So use the Credential given above. Sorry for inconvenience.
+  -- We took permission for the change from the HackMatrix Team to update the login credentials and Readme.md
 
 ---
 *Built with ❤️ by the HackHive Team*
